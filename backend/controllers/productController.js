@@ -47,15 +47,17 @@ exports.deleteProduct = catchAsyncErrors(async (req, res) => {
 exports.getAllProducts = catchAsyncErrors(async (req, res) => {
 
     const resultPerPage = 5;
+    const productCount = await Product.countDocuments();
     const apiFeature = new ApiFeatures(Product.find(), req.query)
       .search()
       .filter()
       .pagination(resultPerPage);
-  const products = await apiFeature.query;
-  res.status(200).json({
-    success: true,
-    products,
-  });
+    const products = await apiFeature.query;
+    res.status(200).json({
+      success: true,
+      products,
+      productCount,
+    });
 });
 
 //get single product details
