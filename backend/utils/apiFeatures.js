@@ -50,6 +50,14 @@ class ApiFeatures {
     this.query = this.query.find(JSON.parse(queryCopyArray));
     return this;
   }
+
+  pagination(resultPerPage) {
+    const currentPage = Number(this.queryStr.page) || 1;
+    const pagesBeforeCurrentPage = currentPage - 1;
+    const skipProducts = pagesBeforeCurrentPage * resultPerPage;
+    this.query.limit(resultPerPage).skip(skipProducts);
+    return this;
+  }
 }
 
 module.exports = ApiFeatures;
