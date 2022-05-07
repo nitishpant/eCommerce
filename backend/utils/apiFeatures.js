@@ -19,7 +19,7 @@ class ApiFeatures {
 
   filter() {
     const queryCopy = { ...this.queryStr };
-    console.log("queryCopy initially ", queryCopy);
+    //console.log("queryCopy initially ", queryCopy);
 
     // const allowed = ["category"]; when we want to allow only specific params
 
@@ -38,7 +38,7 @@ class ApiFeatures {
     removeField.forEach((key) => {
       delete queryCopy[key];
     });
-    console.log("queryCopy after removingFields ", queryCopy);
+    //console.log("queryCopy after removingFields ", queryCopy);
 
     let queryCopyArray = JSON.stringify(queryCopy);
     queryCopyArray = queryCopyArray.replace(
@@ -46,7 +46,7 @@ class ApiFeatures {
       (key) => `$${key}`
     );
 
-    console.log("queryCopy after price filter", queryCopyArray);
+    //console.log("queryCopy after price filter", queryCopyArray);
     this.query = this.query.find(JSON.parse(queryCopyArray));
     return this;
   }

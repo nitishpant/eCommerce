@@ -4,14 +4,14 @@ const User = require("../models/userModel");
 const sendToken = require("../utils/jwtToken");
 
 //register a user
-
 exports.registerUser = catchAsyncErrors(async (req, res) => {
-  const { name, email, password } = req.body;
+  const { name, email, password, role } = req.body;
 
   const user = await User.create({
     name,
     email,
     password,
+    role,
     avatar: {
       public_id: "sample public id",
       url: "sample url",
@@ -38,3 +38,17 @@ exports.loginUser = catchAsyncErrors(async (req, res, next) => {
 
   sendToken(user, 200, res);
 });
+
+//user logout
+exports.logoutUser = catchAsyncErrors( async(req, res, next)=>{
+  res.cookie("token",null,{   
+    expires: new Date(Date.now()),
+    httpOnly: true,
+  })
+  
+  
+  res.status(200).json({
+    success:true,
+    message:"Logged out"
+  })
+})
