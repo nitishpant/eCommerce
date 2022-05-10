@@ -62,11 +62,6 @@ exports.getAllProducts = catchAsyncErrors(async (req, res) => {
       products,
       productCount,
     });
-  const products = await apiFeature.query;
-  res.status(200).json({
-    success: true,
-    products,
-  });
 });
 
 //get single product details

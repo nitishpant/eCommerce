@@ -95,6 +95,42 @@ exports.forgotPassword = catchAsyncErrors(async (req, res, next) => {
   }
 });
 
+//resetPassword 
+exports.resetPassword = catchAsyncErrors( async(req, res, next)=>{
+  // creating token hash
+  const resetPasswordToken = crypto
+    .createHash("sha256")
+    .update(req.params.token)
+    .digest("hex");
+
+  const user = await User.findOne({
+    resetPasswordToken,
+    resetPasswordExpire: { $gt: Date.now() },
+  });
+
+  if (!user) {
+    return next(
+      new ErrorHander(
+        "Reset Password Token is invalid or has been expired",
+        400
+      )
+    );
+  }
+
+  if (req.body.password !== req.body.confirmPassword) {
+    return next(new ErrorHander("Password does not password", 400));
+  }
+
+  user.password = req.body.password;
+  user.resetPasswordToken = undefined;
+  user.resetPasswordExpire = undefined;
+
+  await user.save();
+
+  sendToken(user, 200, res);
+})
+
+//logout User
 exports.logoutUser = catchAsyncErrors( async(req, res, next)=>{
   res.cookie("token",null,{   
     expires: new Date(Date.now()),
@@ -107,4 +143,54 @@ exports.logoutUser = catchAsyncErrors( async(req, res, next)=>{
     message:"Logged out"
   })
 })
+
+//get user details
+exports.getUserDetails = catchAsyncErrors( async(req, res, next)=>{
+  const user = await User.findById(req.user.id);
+  res.status(200).json({
+    success:true,
+    user
+  })
+})
+
+//update user Password
+exports.updatePassword = catchAsyncErrors( async(req, res, next)=>{
+  const user = await User.findById(req.user.id).select("+password");
+  const isPasswordMatch = await user.comparePassword(req.body.oldPassword);
+
+  if(!isPasswordMatch){
+    return next(new ErrorHandler("Password doesn't match",401));
+  }
+  if(req.body.newPassword!== req.body.confirmPassword){
+         return next(new ErrorHandler("Password doesn't match",401));
+  }
+  user.password = req.body.newPassword;
+  await user.save();
+
+  sendToken(user,200,res);
+})
+
+//get all users Admin only
+exports.getAllUsers = catchAsyncErrors( async(req, res, next)=>{
+  const users = await User.find();
+
+  res.status(200).json({
+    success:true,
+    users
+  })
+})
+
+// get user details Admin only
+exports.getSingleUserDetails = catchAsyncErrors( async(req, res, next)=>{
+  const user = await User.findById(req.params.id);
+  if(!user){
+     return next( new ErrorHandler("user does not exist",400));
+  }
+
+  res.status(200).json({
+    success:true,
+    user
+  })
+})
+
 
