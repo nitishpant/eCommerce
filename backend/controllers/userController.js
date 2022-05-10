@@ -95,6 +95,7 @@ exports.forgotPassword = catchAsyncErrors(async (req, res, next) => {
   }
 });
 
+
 //resetPassword 
 exports.resetPassword = catchAsyncErrors( async(req, res, next)=>{
   // creating token hash
@@ -131,6 +132,7 @@ exports.resetPassword = catchAsyncErrors( async(req, res, next)=>{
 })
 
 //logout User
+
 exports.logoutUser = catchAsyncErrors( async(req, res, next)=>{
   res.cookie("token",null,{   
     expires: new Date(Date.now()),
@@ -143,6 +145,7 @@ exports.logoutUser = catchAsyncErrors( async(req, res, next)=>{
     message:"Logged out"
   })
 })
+
 
 //get user details
 exports.getUserDetails = catchAsyncErrors( async(req, res, next)=>{
